@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>主页</title>
     <link href="/lib/vuetify/googleapis.css" rel="stylesheet">
 
     <link href="/lib/vuetify/materialdesignicons.min.css" rel="stylesheet">
@@ -15,32 +15,21 @@
     <v-app>
         <v-content>
             <v-container>
-                <v-simple-table>
-                    <template v-slot:default>
-                        <thead>
-                        <tr>
-                            <th class="text-left">ID</th>
-                            <th class="text-left">TYPE</th>
-                            <th class="text-left">LEVEL_ID</th>
-                            <th class="text-left">IS_MAIN</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="item in page.list" :key="item.id">
-                            <td>{{ item.id }}</td>
-                            <td>{{ item.type }}</td>
-                            <td>{{ item.levelId }}</td>
-                            <td>{{ item.isMain }}</td>
-                        </tr>
-                        </tbody>
-                    </template>
-                </v-simple-table>
-                <div class="text-center">
-                    <v-pagination
-                            v-model="page.pageNum"
-                            :length="page.pages"
-                    ></v-pagination>
-                </div>
+                <v-card>
+                    <v-card-title>数据列表</v-card-title>
+                    <v-card-text>
+                        <v-data-table
+                                :headers="headers"
+                                :items="page.list"
+                                hide-default-footer
+                                class="elevation-1"
+                        ></v-data-table>
+                        <div class="text-left pt-2">
+                            <v-pagination v-model="page.pageNum" :length="page.pages"></v-pagination>
+                        </div>
+                    </v-card-text>
+                </v-card>
+
             </v-container>
         </v-content>
     </v-app>
@@ -54,6 +43,12 @@
         el: '#app',
         vuetify: new Vuetify(),
         data:{
+            headers: [
+                {text: 'ID', value: 'id'},
+                {text: 'TYPE', value: 'type'},
+                {text: 'LEVEL_ID', value: 'levelId'},
+                {text: 'IS_MAIN', value: 'isMain'}
+            ],
             page: {
                 pageSize: 10,
                 pageNum: 1,
