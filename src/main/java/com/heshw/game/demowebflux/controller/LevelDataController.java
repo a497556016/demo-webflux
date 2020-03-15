@@ -32,12 +32,11 @@ public class LevelDataController {
     }
 
     @GetMapping
-    public Flux<PageResult<LevelData>> page(int pageSize, int pageNum){
+    public Mono<PageResult<LevelData>> page(int pageSize, int pageNum){
         final Query query = new Query();
-        return Flux.create(pageResultFluxSink -> {
+        return Mono.create(pageResultFluxSink -> {
             log.info("{}", pageResultFluxSink);
-            pageResultFluxSink.next(pageHelper.pageQuery(query, LevelData.class, pageSize, pageNum));
-            pageResultFluxSink.complete();
+            pageResultFluxSink.success(pageHelper.pageQuery(query, LevelData.class, pageSize, pageNum));
         });
     }
 

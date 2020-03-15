@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="/lib/vuetify/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+</head>
+<body>
+<div id="app">
+    <v-app>
+        <v-content>
+            <v-container>
+                <v-simple-table>
+                    <template v-slot:default>
+                        <thead>
+                        <tr>
+                            <th class="text-left">ID</th>
+                            <th class="text-left">TYPE</th>
+                            <th class="text-left">LEVEL_ID</th>
+                            <th class="text-left">IS_MAIN</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="item in page.list" :key="item.id">
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.type }}</td>
+                            <td>{{ item.levelId }}</td>
+                            <td>{{ item.isMain }}</td>
+                        </tr>
+                        </tbody>
+                    </template>
+                </v-simple-table>
+                <div class="text-center">
+                    <v-pagination
+                            v-model="page.pageNum"
+                            :length="page.pages"
+                    ></v-pagination>
+                </div>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+
+<script src="/lib/vue/vue.min.js"></script>
+<script src="/lib/vuetify/vuetify.js"></script>
+<script src="/lib/axios/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data:{
+            page: {
+                pageSize: 10,
+                pageNum: 1,
+                total: 0,
+                pages: 0,
+                list: []
+            }
+        },
+        watch: {
+            'page.pageNum': function(){
+                this.loadData();
+            }
+        },
+        mounted(){
+            this.loadData();
+        },
+        methods: {
+            loadData(){
+                axios.get('http://localhost:8080/levelData', {
+                    params: {
+                        pageSize: this.page.pageSize,
+                        pageNum: this.page.pageNum
+                    }
+                }).then(({data}) => {
+                    console.log(data)
+                    this.page = data;
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>
