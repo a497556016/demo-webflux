@@ -5,14 +5,9 @@ import com.heshw.game.demowebflux.entity.LevelData;
 import com.heshw.game.demowebflux.repository.LevelDataRepository;
 import com.heshw.game.demowebflux.utils.MongoPageHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -28,6 +23,11 @@ public class LevelDataController {
 
     @PostMapping
     public Mono<LevelData> save(@RequestBody LevelData levelData){
+        return this.levelDataRepository.save(levelData);
+    }
+
+    @PostMapping("/params")
+    public Mono<LevelData> save1(LevelData levelData){
         return this.levelDataRepository.save(levelData);
     }
 
