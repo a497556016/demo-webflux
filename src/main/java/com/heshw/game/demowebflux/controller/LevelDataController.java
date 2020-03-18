@@ -30,8 +30,8 @@ public class LevelDataController {
     private MongoPageHelper pageHelper;
 
     @PostMapping
-    public Mono<LevelData> save(HttpServletRequest request){
-        BufferedReader reader = null;
+    public Mono<LevelData> save(@RequestBody LevelData levelData, HttpServletRequest request){
+        /*BufferedReader reader = null;
         StringBuffer data = new StringBuffer();
         try {
             reader = request.getReader();
@@ -60,7 +60,7 @@ public class LevelDataController {
         Object isMain = map.get("isMain");
         if(isMain instanceof Boolean) {
             levelData.setIsMain((Boolean) isMain);
-        }
+        }*/
         return this.levelDataRepository.save(levelData);
     }
 
