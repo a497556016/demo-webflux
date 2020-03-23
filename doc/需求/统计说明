@@ -1,0 +1,8 @@
+
+ 消费字段
+ int showVideoItem; // 看视频步数
+int buyItem1;  // 购买道具1
+	int buyItem2;  // 购买道具1
+	int buyItem3;  // 购买道具1
+
+消费人数是这个四个字段的人数统计

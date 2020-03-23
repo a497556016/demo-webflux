@@ -2,6 +2,7 @@ package com.heshw.game.demowebflux.entity;
 
 import lombok.Data;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
@@ -25,12 +26,14 @@ import java.util.Date;
 public class LevelData {
     @Id
     private String objectId;
-    private Integer userId;
+    private User user;
+    private String userId;
     private Integer levelId;
     private Boolean winOrflase;
     private Integer gameTime;
     private Integer showVideoStep;
     private Integer showVideoItem;
+    private Integer showVideoRelive;
     private Integer useItem1;
     private Integer useItem2;
     private Integer useItem3;
@@ -41,4 +44,5 @@ public class LevelData {
     private Integer shopBuyNum;
     private String version;
 
+    private Date createDate;
 }

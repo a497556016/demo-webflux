@@ -12,21 +12,43 @@
 </head>
 <body>
 <div id="app">
+
     <v-app>
+
         <v-content>
             <v-container>
                 <v-card>
                     <v-card-title>数据列表</v-card-title>
                     <v-card-text>
+                        <v-row>
+                            <v-col cols="12" md="3">
+                                <m-date-picker v-model="query.beginDate" label="起始日期" placeholder="选择日期(默认8天前)"></m-date-picker>
+                            </v-col>
+                            <v-col cols="12" md="3">
+                                <m-date-picker v-model="query.endDate" label="结束日期" placeholder="选择日期(默认昨天)"></m-date-picker>
+                            </v-col>
+                            <v-col cols="12" md="3">
+                                <v-text-field v-model="query.version" label="版本" placeholder="选择版本"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" md="3">
+                                <m-date-picker v-model="query.userCreateDate" label="用户创建日期" placeholder="选择日期"></m-date-picker>
+                            </v-col>
+
+                        </v-row>
+                        <v-row>
+                            <v-col cols="12" md="6">
+                                <v-btn color="primary" @click="loadData">筛选数据</v-btn>
+                                <v-btn color="primary" @click="exportData">下载数据</v-btn>
+                            </v-col>
+                        </v-row>
+                        <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
                         <v-data-table
                                 :headers="headers"
-                                :items="page.list"
-                                hide-default-footer
+                                :items="data"
+                                local="zhHans"
                                 class="elevation-1"
-                        ></v-data-table>
-                        <div class="text-left pt-2">
-                            <v-pagination v-model="page.pageNum" :length="page.pages"></v-pagination>
-                        </div>
+                        >
+                        </v-data-table>
                     </v-card-text>
                 </v-card>
 
@@ -36,30 +58,94 @@
 </div>
 
 <script src="/lib/vue/vue.min.js"></script>
+<script src="/js/components/DatePicker.js"></script>
 <script src="/lib/vuetify/vuetify.js"></script>
 <script src="/lib/axios/axios.min.js"></script>
+<script src="/lib/moment/moment.js"></script>
 <script>
+    var zhHans = {
+        close: 'Close',
+        dataIterator: {
+            pageText: '{0}-{1} of {2}',
+            noResultsText: 'No matching records found',
+            loadingText: 'Loading items...',
+        },
+        dataTable: {
+            itemsPerPageText: '每页数目:',
+            ariaLabel: {
+                sortDescending: ': Sorted descending. Activate to remove sorting.',
+                sortAscending: ': Sorted ascending. Activate to sort descending.',
+                sortNone: ': Not sorted. Activate to sort ascending.',
+            },
+            sortBy: '根据排序',
+        },
+        dataFooter: {
+            pageText: '{0}-{1} of {2}',
+            itemsPerPageText: 'Items per page:',
+            itemsPerPageAll: 'All',
+            nextPage: 'Next page',
+            prevPage: '上一页',
+            firstPage: 'First page',
+            lastPage: 'Last page',
+        },
+        datePicker: {
+            itemsSelected: '{0} selected',
+        },
+        noDataText: '没有数据',
+        carousel: {
+            prev: 'Previous visual',
+            next: 'Next visual',
+        },
+        calendar: {
+            moreEvents: '{0} more',
+        },
+    }
+    axios.defaults.timeout = 60000;
+    var beginDate = moment().add(-8, 'days').format('YYYY-MM-DD');
+    var endDate = moment().add(-1, 'days').format('YYYY-MM-DD');
     new Vue({
         el: '#app',
-        vuetify: new Vuetify(),
+        vuetify: new Vuetify({
+            lang: {
+                locales: { zhHans },
+                current: 'zhHans',
+            },
+        }),
         data:{
             headers: [
-                {text: 'ID', value: 'id'},
-                {text: 'TYPE', value: 'type'},
-                {text: 'LEVEL_ID', value: 'levelId'},
-                {text: 'IS_MAIN', value: 'isMain'}
+                {text: '等级', value: 'levelId'},
+                {text: '进入次数', value: 'playTimes'},
+                {text: '进入人数', value: 'playUsers'},
+                {text: '胜利次数', value: 'winTimes'},
+                {text: '失败次数', value: 'loseTimes'},
+                {text: '平均时长', value: 'avgDuration'},
+                {text: '观看视频步数', value: 'videoSteps'},
+                {text: '观看视频人数', value: 'videoUsers'},
+                {text: '视频道具次数', value: 'videoItemCount'},
+                {text: '视频道具使用人数', value: 'videoItemUsers'},
+                {text: '道具1使用次数', value: 'item1UseTimes'},
+                {text: '道具1使用人数', value: 'item1UseUsers'},
+                {text: '道具2使用次数', value: 'item2UseTimes'},
+                {text: '道具2使用人数', value: 'item2UseUsers'},
+                {text: '道具3使用次数', value: 'item3UseTimes'},
+                {text: '道具3使用人数', value: 'item3UseUsers'},
+                {text: '复活界面步数+5使用次数', value: 'buyStepTimes'},
+                {text: '步数+5使用人数', value: 'buyStepUsers'},
+                {text: '道具1购买次数', value: 'buyItem1Times'},
+                {text: '道具1购买人数', value: 'buyItem1Users'},
+                {text: '道具2购买次数', value: 'buyItem2Times'},
+                {text: '道具2购买人数', value: 'buyItem2Users'},
+                {text: '道具3购买次数', value: 'buyItem3Times'},
+                {text: '道具3购买人数', value: 'buyItem3Users'},
+                {text: '商店购买人数', value: 'shopBuyUsers'},
+                {text: '商店购买次数', value: 'shopBuyTimes'},
+                {text: '消费次数', value: 'payTimes'}
             ],
-            page: {
-                pageSize: 10,
-                pageNum: 1,
-                total: 0,
-                pages: 0,
-                list: []
-            }
-        },
-        watch: {
-            'page.pageNum': function(){
-                this.loadData();
+            data: [],
+            loading: false,
+            query: {
+                beginDate,
+                endDate
             }
         },
         mounted(){
@@ -67,15 +153,17 @@
         },
         methods: {
             loadData(){
-                axios.get('http://localhost:8080/levelData', {
-                    params: {
-                        pageSize: this.page.pageSize,
-                        pageNum: this.page.pageNum
-                    }
+                this.loading = true;
+                axios.get('http://localhost:8080/levelData/count', {
+                    params: this.query
                 }).then(({data}) => {
+                    this.loading = false;
                     console.log(data)
-                    this.page = data;
+                    this.data = data;
                 })
+            },
+            exportData(){
+                window.open(`http://localhost:8080/levelData/export?beginDate=${this.query.beginDate||''}&endDate=${this.query.endDate||''}&version=${this.query.version||''}&userCreateDate=${this.query.userCreateDate||''}`)
             }
         }
     })

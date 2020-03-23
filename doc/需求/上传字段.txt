@@ -12,4 +12,23 @@ int userId; //用戶ID
  int buyItem2;  // 购买道具1
  int buyItem3;  // 购买道具1
  int shopBuyNum;// 商店购买次数
- std::string sVersion; //版本号
+ std::string version; //版本号
+
+
+
+ std::string userId; //用戶ID
+  int levelId;// 关卡ID
+  bool winOrflase; // true win false lose
+  int gameTime;  // 耗時
+  int showVideoStep; // 看视频步数
+  int showVideoItem; // 看视频道具
+  int showVideoRelive; // 视频购买复活步数
+  int useItem1;  // 使用道具1
+  int useItem2;  // 使用道具2
+  int useItem3;  // 使用道具3
+  int buyStep;  // 复活购买步数
+  int buyItem1;  // 购买道具1
+  int buyItem2;  // 购买道具2
+  int buyItem3;  // 购买道具3
+  int shopBuyNum;// 商店购买次数
+  std::string version;

@@ -6,7 +6,7 @@ spring:
 #    driver-class-name: com.mysql.jdbc.Driver
   data:
     mongodb:
-      host: 127.0.0.1
+      host: 192.168.0.45
       port: 27017
       database: game
       option:
