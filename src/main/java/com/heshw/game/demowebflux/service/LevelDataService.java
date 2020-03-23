@@ -149,10 +149,11 @@ public class LevelDataService {
             long shopBuyUsers = data.stream().filter(levelData -> levelData.getShopBuyNum() > 0).map(LevelData::getUserId).distinct().count();
             count.setShopBuyUsers(shopBuyUsers);
 
-            long payUsers = data.stream().filter(levelData -> levelData.getShowVideoItem() > 0)
-                    .filter(levelData -> levelData.getBuyItem1() > 0)
-                    .filter(levelData -> levelData.getBuyItem2() > 0)
-                    .filter(levelData -> levelData.getBuyItem3() > 0)
+            long payUsers = data.stream().filter(levelData ->
+                    levelData.getShowVideoItem() > 0
+                    ||levelData.getBuyItem1() > 0
+                    ||levelData.getBuyItem2() > 0
+                    ||levelData.getBuyItem3() > 0)
                     .map(LevelData::getUserId).distinct().count();
             count.setPayUsers(payUsers);
 
