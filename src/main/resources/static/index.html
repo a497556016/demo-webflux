@@ -103,6 +103,7 @@
     axios.defaults.timeout = 60000;
     var beginDate = moment().add(-8, 'days').format('YYYY-MM-DD');
     var endDate = moment().add(-1, 'days').format('YYYY-MM-DD');
+    var baseUrl = "";
     new Vue({
         el: '#app',
         vuetify: new Vuetify({
@@ -154,7 +155,7 @@
         methods: {
             loadData(){
                 this.loading = true;
-                axios.get('http://localhost:8080/levelData/count', {
+                axios.get('/levelData/count', {
                     params: this.query
                 }).then(({data}) => {
                     this.loading = false;
@@ -163,7 +164,7 @@
                 })
             },
             exportData(){
-                window.open(`http://localhost:8080/levelData/export?beginDate=${this.query.beginDate||''}&endDate=${this.query.endDate||''}&version=${this.query.version||''}&userCreateDate=${this.query.userCreateDate||''}`)
+                window.open(`${window.location.origin}/levelData/export?beginDate=${this.query.beginDate||''}&endDate=${this.query.endDate||''}&version=${this.query.version||''}&userCreateDate=${this.query.userCreateDate||''}`)
             }
         }
     })
