@@ -82,7 +82,7 @@ public class LevelDataService {
             long playUsers = data.stream().map(LevelData::getUserId).distinct().count();
             count.setPlayUsers(playUsers);
 
-            long winTimes = data.stream().map(LevelData::getWinOrflase).filter(b -> null != b && b).count();
+            long winTimes = data.stream().map(LevelData::isWinOrflase).filter(b -> b).count();
             count.setWinTimes(winTimes);
             count.setLoseTimes(playTimes - winTimes);
 
@@ -92,65 +92,69 @@ public class LevelDataService {
             int videoSteps = data.stream().mapToInt(LevelData::getShowVideoStep).sum();
             count.setVideoSteps(videoSteps);
 
-            long videoUsers = data.stream().filter(levelData -> null != levelData.getShowVideoStep() && levelData.getShowVideoStep() > 0).map(LevelData::getUserId).distinct().count();
+            long videoUsers = data.stream().filter(levelData -> levelData.getShowVideoStep() > 0).map(LevelData::getUserId).distinct().count();
             count.setVideoUsers(videoUsers);
 
             int videoItemCount = data.stream().mapToInt(LevelData::getShowVideoItem).sum();
             count.setVideoItemCount(videoItemCount);
 
-            long videoItemUsers = data.stream().filter(levelData -> null != levelData.getShowVideoItem() && levelData.getShowVideoItem() > 0).map(LevelData::getUserId).distinct().count();
+            long videoItemUsers = data.stream().filter(levelData -> levelData.getShowVideoItem() > 0).map(LevelData::getUserId).distinct().count();
             count.setVideoItemUsers(videoItemUsers);
 
             int item1UseTimes = data.stream().mapToInt(LevelData::getUseItem1).sum();
             count.setItem1UseTimes(item1UseTimes);
 
-            long item1UseUsers = data.stream().filter(levelData -> null != levelData.getUseItem1() && levelData.getUseItem1() > 0).map(LevelData::getUserId).distinct().count();
+            long item1UseUsers = data.stream().filter(levelData -> levelData.getUseItem1() > 0).map(LevelData::getUserId).distinct().count();
             count.setItem1UseUsers(item1UseUsers);
 
             int item2UseTimes = data.stream().mapToInt(LevelData::getUseItem2).sum();
             count.setItem2UseTimes(item2UseTimes);
 
-            long item2UseUsers = data.stream().filter(levelData -> null != levelData.getUseItem2() && levelData.getUseItem2() > 0).map(LevelData::getUserId).distinct().count();
+            long item2UseUsers = data.stream().filter(levelData -> levelData.getUseItem2() > 0).map(LevelData::getUserId).distinct().count();
             count.setItem2UseUsers(item2UseUsers);
 
             int item3UseTimes = data.stream().mapToInt(LevelData::getUseItem3).sum();
             count.setItem3UseTimes(item3UseTimes);
 
-            long item3UseUsers = data.stream().filter(levelData -> null != levelData.getUseItem3() && levelData.getUseItem3() > 0).map(LevelData::getUserId).distinct().count();
+            long item3UseUsers = data.stream().filter(levelData -> levelData.getUseItem3() > 0).map(LevelData::getUserId).distinct().count();
             count.setItem3UseUsers(item3UseUsers);
 
             int buyStepTimes = data.stream().mapToInt(LevelData::getBuyStep).sum();
             count.setBuyStepTimes(buyStepTimes);
 
-            long buyStepUsers = data.stream().filter(levelData -> null != levelData.getBuyStep() && levelData.getBuyStep() > 0).map(LevelData::getUserId).distinct().count();
+            long buyStepUsers = data.stream().filter(levelData -> levelData.getBuyStep() > 0).map(LevelData::getUserId).distinct().count();
             count.setBuyStepUsers(buyStepUsers);
 
             int buyItem1Times = data.stream().mapToInt(LevelData::getBuyItem1).sum();
             count.setBuyItem1Times(buyItem1Times);
 
-            long buyItem1Users = data.stream().filter(levelData -> null != levelData.getBuyItem1() && levelData.getBuyItem1() > 0).map(LevelData::getUserId).distinct().count();
+            long buyItem1Users = data.stream().filter(levelData -> levelData.getBuyItem1() > 0).map(LevelData::getUserId).distinct().count();
             count.setBuyItem1Users(buyItem1Users);
 
             int buyItem2Times = data.stream().mapToInt(LevelData::getBuyItem2).sum();
             count.setBuyItem2Times(buyItem2Times);
 
-            long buyItem2Users = data.stream().filter(levelData -> null != levelData.getBuyItem2() && levelData.getBuyItem2() > 0).map(LevelData::getUserId).distinct().count();
+            long buyItem2Users = data.stream().filter(levelData -> levelData.getBuyItem2() > 0).map(LevelData::getUserId).distinct().count();
             count.setBuyItem2Users(buyItem2Users);
 
             int buyItem3Times = data.stream().mapToInt(LevelData::getBuyItem3).sum();
             count.setBuyItem3Times(buyItem3Times);
 
-            long buyItem3Users = data.stream().filter(levelData -> null != levelData.getBuyItem3() && levelData.getBuyItem3() > 0).map(LevelData::getUserId).distinct().count();
+            long buyItem3Users = data.stream().filter(levelData -> levelData.getBuyItem3() > 0).map(LevelData::getUserId).distinct().count();
             count.setBuyItem3Users(buyItem3Users);
 
             int shopBuyTimes = data.stream().mapToInt(LevelData::getShopBuyNum).sum();
             count.setShopBuyTimes(shopBuyTimes);
 
-            long shopBuyUsers = data.stream().filter(levelData -> null != levelData.getShopBuyNum() && levelData.getShopBuyNum() > 0).map(LevelData::getUserId).distinct().count();
+            long shopBuyUsers = data.stream().filter(levelData -> levelData.getShopBuyNum() > 0).map(LevelData::getUserId).distinct().count();
             count.setShopBuyUsers(shopBuyUsers);
 
-            long payTimes = videoItemUsers + buyItem1Users + buyItem2Users + buyItem3Users;
-            count.setPayTimes(payTimes);
+            long payUsers = data.stream().filter(levelData -> levelData.getShowVideoItem() > 0)
+                    .filter(levelData -> levelData.getBuyItem1() > 0)
+                    .filter(levelData -> levelData.getBuyItem2() > 0)
+                    .filter(levelData -> levelData.getBuyItem3() > 0)
+                    .map(LevelData::getUserId).distinct().count();
+            count.setPayUsers(payUsers);
 
             counts.add(count);
         });

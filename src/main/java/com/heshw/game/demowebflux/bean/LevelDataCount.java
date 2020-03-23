@@ -67,6 +67,6 @@ public class LevelDataCount {
     private long shopBuyUsers;//购买人数
     @ExcelField(title = "商店购买次数")
     private int shopBuyTimes;//购买次数
-    @ExcelField(title = "消费次数")
-    private long payTimes;//消费次数
+    @ExcelField(title = "消费人数")
+    private long payUsers;//消费人数
 }
