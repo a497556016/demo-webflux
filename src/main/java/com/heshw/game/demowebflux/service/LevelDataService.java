@@ -86,6 +86,10 @@ public class LevelDataService {
             count.setWinTimes(winTimes);
             count.setLoseTimes(playTimes - winTimes);
 
+            long winUsers = data.stream().filter(LevelData::isWinOrflase).map(LevelData::getUserId).distinct().count();
+            count.setWinUsers(winUsers);
+            count.setLoseUsers(playUsers - winUsers);
+
             int avgDuration = data.stream().mapToInt(LevelData::getGameTime).sum()/playTimes;
             count.setAvgDuration(avgDuration);
 

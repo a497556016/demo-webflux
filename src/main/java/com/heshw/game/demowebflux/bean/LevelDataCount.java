@@ -19,8 +19,12 @@ public class LevelDataCount {
     private long playUsers;
     @ExcelField(title = "胜利次数")
     private long winTimes;
+    @ExcelField(title = "胜利人数")
+    private long winUsers;
     @ExcelField(title = "失败次数")
     private long loseTimes;
+    @ExcelField(title = "失败人数")
+    private long loseUsers;
     @ExcelField(title = "平均时长")
     private int avgDuration;
     @ExcelField(title = "观看视频步数")

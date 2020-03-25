@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>版本管理</title>
+    <link href="/lib/vuetify/googleapis.css" rel="stylesheet">
+
+    <link href="/lib/vuetify/materialdesignicons.min.css" rel="stylesheet">
+    <link href="/lib/vuetify/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+</head>
+<body>
+<div id="app">
+    <v-app>
+        <v-content>
+            <v-app-bar>
+                <v-toolbar-title>版本管理</v-toolbar-title>
+
+            </v-app-bar>
+            <v-container>
+                <v-btn color="primary" @click="editVisible = true">添加版本</v-btn>
+                <v-btn color="red" @click="deleteRows">删除</v-btn>
+                <v-data-table
+                        :headers="headers"
+                        :items="page.list"
+                        class="elevation-1"
+                        show-select
+                        item-key="objectId"
+                        v-model="selected"
+                >
+                </v-data-table>
+            </v-container>
+        </v-content>
+
+        <v-dialog v-model="editVisible" width="500">
+            <v-card>
+                <v-card-title>添加版本</v-card-title>
+                <v-card-text>
+                    <v-text-field label="版本" v-model="version.version"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" @click="save">保存</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+    </v-app>
+</div>
+<script src="/lib/vue/vue.min.js"></script>
+<script src="/js/components/DatePicker.js"></script>
+<script src="/lib/vuetify/vuetify.js"></script>
+<script src="/lib/axios/axios.min.js"></script>
+<script src="/lib/moment/moment.js"></script>
+<script src="/js/common/index.js"></script>
+<script>
+    CreateApp({
+        el: '#app',
+        data: {
+            headers: [
+                {text: 'ID', value: 'objectId', width: 100},
+                {text: '版本', value: 'version'}
+            ],
+            page: {
+                pageSize: 10,
+                pageNum: 1,
+                pages: 0
+            },
+            selected: [],
+            editVisible: false,
+            version: {
+
+            }
+        },
+        mounted(){
+            this.loadPage();
+        },
+        methods: {
+            loadPage(){
+                axios.get('/gameVersion/page', {
+                    params: {
+                        pageSize: this.page.pageSize,
+                        pageNum: this.page.pageNum
+                    }
+                }).then(({data}) => {
+                    this.page = data;
+                })
+            },
+            save(){
+                axios.post('/gameVersion', this.version).then(data => {
+                    console.log(data);
+                    this.loadPage();
+                    this.version = {};
+                    this.editVisible = false;
+                })
+            },
+            deleteRows(){
+                if(this.selected.length) {
+                    console.log(this.selected);
+                    const ps = [];
+                    this.selected.forEach(version => {
+                        ps.push(axios.delete('/gameVersion/'+version.objectId));
+                    });
+                    Promise.all(ps).then(() => {
+                        this.loadPage();
+                    })
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>

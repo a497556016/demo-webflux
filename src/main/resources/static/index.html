@@ -12,11 +12,19 @@
 </head>
 <body>
 <div id="app">
-
     <v-app>
-
         <v-content>
+            <v-app-bar color="deep-purple accent-4" dense dark>
+                <v-toolbar-title>GAME DATA</v-toolbar-title>
+                <v-spacer></v-spacer>
+
+                <v-btn icon @click="toVersionManage">
+                    版本管理
+                </v-btn>
+                <div style="width: 50px;"></div>
+            </v-app-bar>
             <v-container>
+
                 <v-card>
                     <v-card-title>数据列表</v-card-title>
                     <v-card-text>
@@ -28,7 +36,8 @@
                                 <m-date-picker v-model="query.endDate" label="结束日期" placeholder="选择日期(默认昨天)"></m-date-picker>
                             </v-col>
                             <v-col cols="12" md="3">
-                                <v-text-field v-model="query.version" label="版本" placeholder="选择版本"></v-text-field>
+                                <v-select label="版本" :items="versions" placeholder="选择版本" v-model="query.version"></v-select>
+<!--                                <v-text-field v-model="query.version" label="版本" placeholder="选择版本"></v-text-field>-->
                             </v-col>
                             <v-col cols="12" md="3">
                                 <m-date-picker v-model="query.userCreateDate" label="用户创建日期" placeholder="选择日期"></m-date-picker>
@@ -62,63 +71,21 @@
 <script src="/lib/vuetify/vuetify.js"></script>
 <script src="/lib/axios/axios.min.js"></script>
 <script src="/lib/moment/moment.js"></script>
+<script src="/js/common/index.js"></script>
 <script>
-    var zhHans = {
-        close: 'Close',
-        dataIterator: {
-            pageText: '{0}-{1} of {2}',
-            noResultsText: 'No matching records found',
-            loadingText: 'Loading items...',
-        },
-        dataTable: {
-            itemsPerPageText: '每页数目:',
-            ariaLabel: {
-                sortDescending: ': Sorted descending. Activate to remove sorting.',
-                sortAscending: ': Sorted ascending. Activate to sort descending.',
-                sortNone: ': Not sorted. Activate to sort ascending.',
-            },
-            sortBy: '根据排序',
-        },
-        dataFooter: {
-            pageText: '{0}-{1} of {2}',
-            itemsPerPageText: 'Items per page:',
-            itemsPerPageAll: 'All',
-            nextPage: 'Next page',
-            prevPage: '上一页',
-            firstPage: 'First page',
-            lastPage: 'Last page',
-        },
-        datePicker: {
-            itemsSelected: '{0} selected',
-        },
-        noDataText: '没有数据',
-        carousel: {
-            prev: 'Previous visual',
-            next: 'Next visual',
-        },
-        calendar: {
-            moreEvents: '{0} more',
-        },
-    }
-    axios.defaults.timeout = 60000;
     var beginDate = moment().add(-8, 'days').format('YYYY-MM-DD');
     var endDate = moment().add(-1, 'days').format('YYYY-MM-DD');
-    var baseUrl = "";
-    new Vue({
+    CreateApp({
         el: '#app',
-        vuetify: new Vuetify({
-            lang: {
-                locales: { zhHans },
-                current: 'zhHans',
-            },
-        }),
         data:{
             headers: [
                 {text: '等级', value: 'levelId'},
                 {text: '进入次数', value: 'playTimes'},
                 {text: '进入人数', value: 'playUsers'},
                 {text: '胜利次数', value: 'winTimes'},
+                {text: '胜利人数', value: 'winUsers'},
                 {text: '失败次数', value: 'loseTimes'},
+                {text: '失败人数', value: 'loseUsers'},
                 {text: '平均时长', value: 'avgDuration'},
                 {text: '观看视频步数', value: 'videoSteps'},
                 {text: '观看视频人数', value: 'videoUsers'},
@@ -147,10 +114,13 @@
             query: {
                 beginDate,
                 endDate
-            }
+            },
+            versions: []
         },
         mounted(){
             this.loadData();
+
+            this.loadVersions();
         },
         methods: {
             loadData(){
@@ -163,11 +133,19 @@
                     this.data = data;
                 })
             },
+            loadVersions(){
+                axios.get('/gameVersion').then(({data}) => {
+                    this.versions = data.map(d => d.version);
+                })
+            },
             exportData(){
                 window.open(`${window.location.origin}/levelData/export?beginDate=${this.query.beginDate||''}&endDate=${this.query.endDate||''}&version=${this.query.version||''}&userCreateDate=${this.query.userCreateDate||''}`)
+            },
+            toVersionManage(){
+                window.open(`${window.location.origin}/pages/version.html`);
             }
         }
-    })
+    });
 </script>
 </body>
 </html>
