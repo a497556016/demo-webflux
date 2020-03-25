@@ -36,7 +36,7 @@
                                 <m-date-picker v-model="query.endDate" label="结束日期" placeholder="选择日期(默认昨天)"></m-date-picker>
                             </v-col>
                             <v-col cols="12" md="3">
-                                <v-select label="版本" :items="versions" placeholder="选择版本" v-model="query.version"></v-select>
+                                <v-select label="版本" :items="versions" placeholder="选择版本" clearable v-model="query.version"></v-select>
 <!--                                <v-text-field v-model="query.version" label="版本" placeholder="选择版本"></v-text-field>-->
                             </v-col>
                             <v-col cols="12" md="3">

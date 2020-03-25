@@ -20,7 +20,7 @@
             </v-app-bar>
             <v-container>
                 <v-btn color="primary" @click="editVisible = true">添加版本</v-btn>
-                <v-btn color="red" @click="deleteRows">删除</v-btn>
+                <v-btn color="error" @click="deleteRows">删除</v-btn>
                 <v-data-table
                         :headers="headers"
                         :items="page.list"

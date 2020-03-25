@@ -1,14 +1,14 @@
 axios.defaults.timeout = 60000;
 
 var zhHans = {
-    close: 'Close',
+    close: '关闭',
     dataIterator: {
-        pageText: '{0}-{1} of {2}',
-        noResultsText: 'No matching records found',
-        loadingText: 'Loading items...',
+        pageText: '{0}-{1}条 总数 {2}',
+        noResultsText: '没有匹配的数据',
+        loadingText: '加载数据...',
     },
     dataTable: {
-        itemsPerPageText: '每页数目:',
+        itemsPerPageText: '显示条数:',
         ariaLabel: {
             sortDescending: ': Sorted descending. Activate to remove sorting.',
             sortAscending: ': Sorted ascending. Activate to sort descending.',
@@ -17,16 +17,16 @@ var zhHans = {
         sortBy: '根据排序',
     },
     dataFooter: {
-        pageText: '{0}-{1} of {2}',
-        itemsPerPageText: 'Items per page:',
-        itemsPerPageAll: 'All',
-        nextPage: 'Next page',
+        pageText: '{0}-{1}条 总数 {2}',
+        itemsPerPageText: '显示条数:',
+        itemsPerPageAll: '所有',
+        nextPage: '下一页',
         prevPage: '上一页',
-        firstPage: 'First page',
-        lastPage: 'Last page',
+        firstPage: '首页',
+        lastPage: '末页',
     },
     datePicker: {
-        itemsSelected: '{0} selected',
+        itemsSelected: '选择{0}条',
     },
     noDataText: '没有数据',
     carousel: {
@@ -34,7 +34,7 @@ var zhHans = {
         next: 'Next visual',
     },
     calendar: {
-        moreEvents: '{0} more',
+        moreEvents: '{0} 更多',
     },
 }
 
