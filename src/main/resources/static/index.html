@@ -14,7 +14,7 @@
 <div id="app">
     <v-app>
         <v-content>
-            <v-app-bar color="deep-purple accent-4" dense dark>
+            <v-app-bar color="deep-purple" dense dark>
                 <v-toolbar-title>GAME DATA</v-toolbar-title>
                 <v-spacer></v-spacer>
 
@@ -22,6 +22,8 @@
                     版本管理
                 </v-btn>
                 <div style="width: 50px;"></div>
+                <v-btn icon @click="logout">退出登录</v-btn>
+                <div style="width: 30px;"></div>
             </v-app-bar>
             <v-container>
 
@@ -113,9 +115,12 @@
             loading: false,
             query: {
                 beginDate,
-                endDate
+                endDate,
+                version: ''
             },
-            versions: []
+            versions: [
+                {text: '全部版本', value: ''}
+            ]
         },
         mounted(){
             this.loadData();
@@ -135,7 +140,12 @@
             },
             loadVersions(){
                 axios.get('/gameVersion').then(({data}) => {
-                    this.versions = data.map(d => d.version);
+                    this.versions.push(...data.map(d => {
+                        return {
+                            text: d.version,
+                            value: d.version
+                        }
+                    }));
                 })
             },
             exportData(){
@@ -143,6 +153,9 @@
             },
             toVersionManage(){
                 window.open(`${window.location.origin}/pages/version.html`);
+            },
+            logout(){
+                window.location.href = "/account/logout";
             }
         }
     });

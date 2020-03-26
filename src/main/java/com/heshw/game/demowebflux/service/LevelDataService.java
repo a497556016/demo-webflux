@@ -3,9 +3,12 @@ package com.heshw.game.demowebflux.service;
 import com.google.common.collect.Lists;
 import com.heshw.game.demowebflux.entity.LevelData;
 import com.heshw.game.demowebflux.bean.LevelDataCount;
+import com.heshw.game.demowebflux.entity.User;
+import com.heshw.game.demowebflux.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,6 +27,9 @@ import java.util.stream.Collectors;
 public class LevelDataService {
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public Mono<List<LevelDataCount>> findCountByPage(String beginDate, String endDate, String version, String userCreateDate) {
         final Query query = new Query();
@@ -44,8 +50,15 @@ public class LevelDataService {
                 try {
                     Date date1 = DateUtils.parseDate(userCreateDate+" 00:00:00", dateFormat);
                     Date date2 = DateUtils.parseDate(userCreateDate+" 23:59:59", dateFormat);
-
-                    criteria.and("user.createDate").gte(date1).lte(date2);
+                    Query userQuery = new Query();
+                    userQuery.addCriteria(Criteria.where("createDate").gte(date1).lt(date2));
+                    List<User> users = mongoTemplate.find(userQuery, User.class);
+                    if(!users.isEmpty()) {
+                        criteria.and("userId").in(users.stream().map(User::getId).collect(Collectors.toList()));
+                    }else {
+                        pageResultMonoSink.success(Lists.newArrayList());
+                    }
+//                    criteria.and("user.createDate").gte(date1).lte(date2);
                 }catch (ParseException e){
                     log.error(e.getMessage());
                 }

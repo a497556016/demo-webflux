@@ -46,6 +46,9 @@ var CreateApp = function (component) {
                 locales: { zhHans },
                 current: 'zhHans',
             },
+            theme: {
+                dark: false,
+            },
         }),
     }, component))
 }

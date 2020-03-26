@@ -26,7 +26,7 @@ import java.util.Date;
 public class LevelData {
     @Id
     private String objectId;
-    private User user;
+//    private User user;
     private String userId;
     private int levelId;
     private boolean winOrflase;

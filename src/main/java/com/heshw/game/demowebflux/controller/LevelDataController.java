@@ -11,6 +11,7 @@ import com.heshw.game.demowebflux.service.LevelDataService;
 import com.heshw.game.demowebflux.utils.MongoPageHelper;
 import com.heshw.game.demowebflux.utils.excel.ExportExcel;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.bson.types.ObjectId;
@@ -18,8 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.netty.http.server.HttpServer;
 import reactor.netty.http.server.HttpServerResponse;
 
@@ -50,21 +54,48 @@ public class LevelDataController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping
-    public Mono<LevelData> save(@RequestBody LevelData levelData){
-        String userId = levelData.getUserId();
-        if(null != userId) {
+    /*@Autowired
+    private ThreadPoolTaskExecutor poolTaskExecutor;
+
+
+    private class UpdateUser implements Runnable{
+        private String userId;
+        private LevelData levelData;
+        public UpdateUser(String userId, LevelData levelData) {
+            this.userId = userId;
+            this.levelData = levelData;
+        }
+
+        @Override
+        public void run() {
+            log.info("update user "+levelData.getObjectId());
             User probe = new User();
             probe.setId(userId);
-            User user = userRepository.findOne(Example.of(probe)).block();
-            if(null == user) {
-                probe.setCreateDate(new Date());
-                user = userRepository.save(probe).block();
+            synchronized (UpdateUser.class) {
+                User user = userRepository.findOne(Example.of(probe)).block();
+                if (null == user) {
+                    probe.setCreateDate(new Date());
+                    user = userRepository.save(probe).block();
+                }
+
+                levelData.setUser(user);
+
+                levelDataRepository.save(levelData).block();
             }
-            levelData.setUser(user);
         }
-        levelData.setCreateDate(new Date());
-        return this.levelDataRepository.save(levelData);
+    }*/
+
+    @PostMapping()
+    public Mono<?> save(@RequestBody LevelData levelData){
+        String userId = levelData.getUserId();
+        if(StringUtils.isNotEmpty(userId)) {
+            levelData.setCreateDate(new Date());
+            return this.levelDataRepository.save(levelData)/*.doOnSuccess(levelData1 -> {
+                poolTaskExecutor.execute(new UpdateUser(userId, levelData1));
+            })*/;
+        }else {
+            return Mono.just("用户ID不能为空！");
+        }
     }
 
     @GetMapping

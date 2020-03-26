@@ -3,10 +3,10 @@ package com.heshw.game.demowebflux;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class DemoWebfluxApplicationTests {
 
-    @Test
+//    @Test
     void contextLoads() {
     }
 
