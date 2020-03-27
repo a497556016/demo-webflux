@@ -95,13 +95,14 @@ public class LevelDataService {
             long playUsers = data.stream().map(LevelData::getUserId).distinct().count();
             count.setPlayUsers(playUsers);
 
-            long winTimes = data.stream().map(LevelData::isWinOrflase).filter(b -> b).count();
+            long winTimes = data.stream().filter(LevelData::isWinOrflase).count();
             count.setWinTimes(winTimes);
             count.setLoseTimes(playTimes - winTimes);
 
             long winUsers = data.stream().filter(LevelData::isWinOrflase).map(LevelData::getUserId).distinct().count();
             count.setWinUsers(winUsers);
-            count.setLoseUsers(playUsers - winUsers);
+            long loseUsers = data.stream().filter(levelData -> !levelData.isWinOrflase()).map(LevelData::getUserId).distinct().count();
+            count.setLoseUsers(loseUsers);
 
             int avgDuration = data.stream().mapToInt(LevelData::getGameTime).sum()/playTimes;
             count.setAvgDuration(avgDuration);
