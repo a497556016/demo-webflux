@@ -38,9 +38,9 @@ public class MongoPageHelper {
     /**
      * 分页查询，直接返回集合类型的结果.
      *
-     * @see MongoPageHelper#pageQuery(org.springframework.data.mongodb.core.query.Query,
-     * java.lang.Class, java.util.function.Function, java.lang.Integer, java.lang.Integer,
-     * java.lang.String)
+     * @see MongoPageHelper#pageQuery(Query,
+     * Class, Function, Integer, Integer,
+     * String)
      */
     public <T> PageResult<T> pageQuery(Query query, Class<T> entityClass, Integer pageSize,
                                        Integer pageNum) {
@@ -50,9 +50,9 @@ public class MongoPageHelper {
     /**
      * 分页查询，不考虑条件分页，直接使用skip-limit来分页.
      *
-     * @see MongoPageHelper#pageQuery(org.springframework.data.mongodb.core.query.Query,
-     * java.lang.Class, java.util.function.Function, java.lang.Integer, java.lang.Integer,
-     * java.lang.String)
+     * @see MongoPageHelper#pageQuery(Query,
+     * Class, Function, Integer, Integer,
+     * String)
      */
     public <T, R> PageResult<R> pageQuery(Query query, Class<T> entityClass, Function<T, R> mapper,
         Integer pageSize, Integer pageNum) {

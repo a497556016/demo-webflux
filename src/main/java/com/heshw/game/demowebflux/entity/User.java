@@ -23,4 +23,5 @@ public class User {
     private String id;
 
     private Date createDate;
+
 }

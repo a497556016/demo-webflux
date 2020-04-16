@@ -1,11 +1,12 @@
 package com.heshw.game.demowebflux.controller;
 
-import com.heshw.game.demowebflux.bean.LevelDataCount;
+import com.heshw.game.demowebflux.bean.BuydataBean;
 import com.heshw.game.demowebflux.bean.PageResult;
-import com.heshw.game.demowebflux.entity.LevelData;
-import com.heshw.game.demowebflux.entity.User;
-import com.heshw.game.demowebflux.repository.LevelDataRepository;
+import com.heshw.game.demowebflux.entity.Buydata;
+import com.heshw.game.demowebflux.repository.BuyDataRepository;
 import com.heshw.game.demowebflux.repository.UserRepository;
+import com.heshw.game.demowebflux.service.BuydataCountService;
+import com.heshw.game.demowebflux.service.BuydataServerice;
 import com.heshw.game.demowebflux.service.LevelDataCountService;
 import com.heshw.game.demowebflux.service.LevelDataService;
 import com.heshw.game.demowebflux.utils.MongoPageHelper;
@@ -16,39 +17,30 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-import reactor.netty.http.server.HttpServer;
-import reactor.netty.http.server.HttpServerResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/levelData")
+@RequestMapping("/buyData")
 @Slf4j
-public class LevelDataController {
+public class buyDataContorller {
+    @Autowired
+    private BuyDataRepository levelDataRepository;
 
     @Autowired
-    private LevelDataRepository levelDataRepository;
+    private BuydataServerice levelDataService;
 
     @Autowired
-    private LevelDataService levelDataService;
-
-    @Autowired
-    private LevelDataCountService levelDataCountService;
+    private BuydataCountService levelDataCountService;
 
     @Autowired
     private MongoPageHelper pageHelper;
@@ -56,39 +48,9 @@ public class LevelDataController {
     @Autowired
     private UserRepository userRepository;
 
-    /*@Autowired
-    private ThreadPoolTaskExecutor poolTaskExecutor;
-
-
-    private class UpdateUser implements Runnable{
-        private String userId;
-        private LevelData levelData;
-        public UpdateUser(String userId, LevelData levelData) {
-            this.userId = userId;
-            this.levelData = levelData;
-        }
-
-        @Override
-        public void run() {
-            log.info("update user "+levelData.getObjectId());
-            User probe = new User();
-            probe.setId(userId);
-            synchronized (UpdateUser.class) {
-                User user = userRepository.findOne(Example.of(probe)).block();
-                if (null == user) {
-                    probe.setCreateDate(new Date());
-                    user = userRepository.save(probe).block();
-                }
-
-                levelData.setUser(user);
-
-                levelDataRepository.save(levelData).block();
-            }
-        }
-    }*/
 
     @PostMapping()
-    public Mono<?> save(@RequestBody LevelData levelData){
+    public Mono<?> save(@RequestBody Buydata levelData){
         String userId = levelData.getUserId();
 //        double b =  (double)(Math.round(levelData.getSurplusTarget()*10000))/10000;
 //        levelData.setSurplusTarget(b);
@@ -102,24 +64,8 @@ public class LevelDataController {
         }
     }
 
-    @PutMapping
-    public Mono<?> update(@RequestBody LevelData levelData){
-        String userId = levelData.getUserId();
-        if(StringUtils.isNotEmpty(userId) && levelData.getLevelId() > 0) {
-            List<LevelData> levelDataList = this.levelDataRepository.findAllByUserIdAndLevelId(userId, levelData.getLevelId()).buffer().blockFirst();
-            if(!levelDataList.isEmpty()) {
-                LevelData last = levelDataList.stream().sorted(Comparator.comparing(LevelData::getCreateDate).reversed()).findFirst().orElse(null);
-                levelData.setObjectId(last.getObjectId());
-                levelData.setCreateDate(new Date());
-            }
-            return this.levelDataRepository.save(levelData);
-        }else {
-            return Mono.just("用户ID不能为空！");
-        }
-    }
-
     @GetMapping
-    public Mono<PageResult<LevelData>> page(@RequestParam(defaultValue = "10") int pageSize,
+    public Mono<PageResult<Buydata>> page(@RequestParam(defaultValue = "10") int pageSize,
                                             @RequestParam(defaultValue = "1") int pageNum,
                                             String beginDate,
                                             String endDate,
@@ -158,19 +104,19 @@ public class LevelDataController {
                 Criteria _levelId = Criteria.where("levelId").is(levelId);
                 query.addCriteria(_levelId);
             }
-            pageResultFluxSink.success(pageHelper.pageQuery(query, LevelData.class, pageSize, pageNum));
+            pageResultFluxSink.success(pageHelper.pageQuery(query, Buydata.class, pageSize, pageNum));
         });
     }
 
     @GetMapping("/count")
-    public Mono<List<LevelDataCount>> findCountByPage(String beginDate, String endDate, String version, String userCreateDate ,String channel,String game){
-        return this.levelDataService.findCountByPage(beginDate, endDate, version, userCreateDate,channel,game);
+    public Mono<List<BuydataBean>> findCountByPage(String beginDate, String endDate, String version, String userCreateDate,String channel){
+        return this.levelDataService.findCountByPage(beginDate, endDate, version, userCreateDate,channel);
     }
 
     @GetMapping("/export")
-    public void export(String beginDate, String endDate, String version, String userCreateDate,String channel,String game, HttpServletResponse response){
-        ExportExcel exportExcel = new ExportExcel("导出数据", LevelDataCount.class);
-        List<LevelDataCount> list = this.levelDataService.findCountByPage(beginDate, endDate, version, userCreateDate,channel,game).block();
+    public void export(String beginDate, String endDate, String version, String userCreateDate,String channel, HttpServletResponse response){
+        ExportExcel exportExcel = new ExportExcel("导出数据", BuydataBean.class);
+        List<BuydataBean> list = this.levelDataService.findCountByPage(beginDate, endDate, version, userCreateDate,channel).block();
         exportExcel.setDataList(list);
 
         try {
@@ -181,7 +127,7 @@ public class LevelDataController {
     }
 
     @GetMapping("/{id}")
-    public Mono<LevelData> get(@PathVariable("id") String id){
+    public Mono<Buydata> get(@PathVariable("id") String id){
         return levelDataRepository.findById(id);
     }
 

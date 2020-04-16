@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>主页</title>
+    <title>其他打点</title>
     <link href="/lib/vuetify/googleapis.css" rel="stylesheet">
 
     <link href="/lib/vuetify/materialdesignicons.min.css" rel="stylesheet">
@@ -15,17 +15,14 @@
     <v-app>
         <v-content>
             <v-app-bar color="deep-purple" dense dark>
+                <v-btn icon @click="backData">
+                    返回
+                </v-btn>
                 <v-toolbar-title>GAME DATA</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn icon @click="otherData">
-                    其他打点
-                </v-btn>
+
                 <div style="width: 50px;"></div>
-                <v-btn icon @click="toVersionManage">
-                    版本管理
-                </v-btn>
-                <div style="width: 50px;"></div>
-                <v-btn icon @click="logout">退出登录</v-btn>
+
                 <div style="width: 30px;"></div>
             </v-app-bar>
             <v-container>
@@ -34,7 +31,7 @@
                     <v-card-title>数据列表</v-card-title>
                     <v-card-text>
                         <v-row>
-                            <v-col cols="12" md="2">
+                            <v-col cols="12" md="3">
                                 <m-date-picker v-model="query.beginDate" label="起始日期" placeholder="选择日期(默认8天前)"></m-date-picker>
                             </v-col>
                             <v-col cols="12" md="2">
@@ -42,12 +39,12 @@
                             </v-col>
                             <v-col cols="12" md="2">
                                 <v-select label="版本" :items="versions" placeholder="选择版本" clearable v-model="query.version"></v-select>
-<!--                                <v-text-field v-model="query.version" label="版本" placeholder="选择版本"></v-text-field>-->
+                                <!--                                <v-text-field v-model="query.version" label="版本" placeholder="选择版本"></v-text-field>-->
                             </v-col>
                             <v-col cols="12" md="2">
                                 <v-select label="渠道" :items="channels" placeholder="选择渠道" clearable v-model="query.channel"></v-select>
                             </v-col>
-                            <v-col cols="12" md="2">
+                            <v-col cols="12" md="3">
                                 <m-date-picker v-model="query.userCreateDate" label="用户创建日期" placeholder="选择日期"></m-date-picker>
                             </v-col>
 
@@ -55,7 +52,6 @@
                         <v-row>
                             <v-col cols="12" md="6">
                                 <v-btn color="primary" @click="loadData">筛选数据</v-btn>
-                                <v-btn color="primary" @click="exportData">下载数据</v-btn>
                             </v-col>
                         </v-row>
                         <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
@@ -87,53 +83,26 @@
         el: '#app',
         data:{
             headers: [
-                {text: '等级', value: 'levelId'},
-                {text: '进入次数', value: 'playTimes'},
-                {text: '进入人数', value: 'playUsers'},
-                {text: '胜利次数', value: 'winTimes'},
-                {text: '胜利人数', value: 'winUsers'},
-                {text: '失败次数', value: 'loseTimes'},
-                {text: '失败人数', value: 'loseUsers'},
-                {text: '平均时长(秒)', value: 'avgDuration'},
-                {text: '观看视频步数', value: 'videoSteps'},
-                {text: '观看视频人数', value: 'videoUsers'},
-                {text: '视频道具次数', value: 'videoItemCount'},
-                {text: '视频道具使用人数', value: 'videoItemUsers'},
-                {text: '道具1使用次数', value: 'item1UseTimes'},
-                {text: '道具1使用人数', value: 'item1UseUsers'},
-                {text: '道具2使用次数', value: 'item2UseTimes'},
-                {text: '道具2使用人数', value: 'item2UseUsers'},
-                {text: '道具3使用次数', value: 'item3UseTimes'},
-                {text: '道具3使用人数', value: 'item3UseUsers'},
-                {text: '复活界面步数+5使用次数', value: 'buyStepTimes'},
-                {text: '步数+5使用人数', value: 'buyStepUsers'},
-                {text: '道具1购买次数', value: 'buyItem1Times'},
-                {text: '道具1购买人数', value: 'buyItem1Users'},
-                {text: '道具2购买次数', value: 'buyItem2Times'},
-                {text: '道具2购买人数', value: 'buyItem2Users'},
-                {text: '道具3购买次数', value: 'buyItem3Times'},
-                {text: '道具3购买人数', value: 'buyItem3Users'},
-                {text: '商店购买人数', value: 'shopBuyUsers'},
-                {text: '商店购买次数', value: 'shopBuyTimes'},
-                {text: '消费人数', value: 'payUsers'},
-                {text: '胜利剩余步数', value: 'surplusStep'},
-                {text: '失败时剩余目标平均值', value: 'avgLoseTarget'}
+                {text: '礼包名称', value: 'cname'},
+                {text: '打点名称', value: 'buyName'},
+                {text: '购买次数', value: 'buyNum'},
+                {text: '购买人数', value: 'buyPeopleNum'}
             ],
             data: [],
             loading: false,
             query: {
                 beginDate,
                 endDate,
-                version: '',
-                game: 'tj'
+                version: ''
             },
             versions: [
                 {text: '全部版本', value: ''}
             ],
             channels:
-            [ {text: '全部渠道', value: ''},
-                {text: 'android', value: 'android'},
-                {text: 'ios', value: 'ios'}]
+                [  {text: '全部渠道', value: ''},
+                    {text: 'android', value: 'android'},
+                    {text: 'ios', value: 'ios'}
+                 ]
         },
         mounted(){
             this.loadData();
@@ -143,7 +112,7 @@
         methods: {
             loadData(){
                 this.loading = true;
-                axios.get('/levelData/count', {
+                axios.get('/buyData/count', {
                     params: this.query
                 }).then(({data}) => {
                     this.loading = false;
@@ -161,17 +130,8 @@
                     }));
                 })
             },
-            exportData(){
-                window.open(`${window.location.origin}/levelData/export?beginDate=${this.query.beginDate||''}&endDate=${this.query.endDate||''}&version=${this.query.version||''}&userCreateDate=${this.query.userCreateDate||''}`)
-            },
-            toVersionManage(){
-                window.open(`${window.location.origin}/pages/version.html`);
-            },
-            otherData(){
-                window.open(`${window.location.origin}/pages/other.html`);
-            },
-            logout(){
-                window.location.href = "/account/logout";
+            backData(){
+                window.open(`${window.location.origin}/index.html`);
             }
         }
     });

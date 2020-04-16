@@ -5,6 +5,7 @@ import com.heshw.game.demowebflux.entity.LevelData;
 import com.heshw.game.demowebflux.bean.LevelDataCount;
 import com.heshw.game.demowebflux.entity.User;
 import com.heshw.game.demowebflux.repository.UserRepository;
+import com.heshw.game.demowebflux.utils.excel.ExcelField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +33,7 @@ public class LevelDataService {
     @Autowired
     private UserRepository userRepository;
 
-    public Mono<List<LevelDataCount>> findCountByPage(String beginDate, String endDate, String version, String userCreateDate) {
+    public Mono<List<LevelDataCount>> findCountByPage(String beginDate, String endDate, String version, String userCreateDate,String channel,String game) {
         final Query query = new Query();
         final Criteria criteria = new Criteria();
         final String dateFormat = "YYYY-MM-dd HH:mm:ss";
@@ -45,6 +47,17 @@ public class LevelDataService {
             }
             if(StringUtils.isNotEmpty(version)) {
                 criteria.and("version").is(version);
+            }
+            if(StringUtils.isNotEmpty(channel)){
+                criteria.and("channel").is(channel);
+            }
+            if(StringUtils.isNotEmpty(game)){
+                if(game.equals("tj")){
+                    criteria.and("gameName").nin("ch");
+                }else{
+                    criteria.and("gameName").is(game);
+                }
+
             }
             if(StringUtils.isNotEmpty(userCreateDate)) {
                 try {
@@ -174,6 +187,26 @@ public class LevelDataService {
                     ||levelData.getBuyItem3() > 0)
                     .map(LevelData::getUserId).distinct().count();
             count.setPayUsers(payUsers);
+
+            //
+            int avgSurplusStep = data.stream().mapToInt(LevelData::getSurplusStep).sum();
+            if(winTimes==0){
+                count.setSurplusStep(0);
+            }else{
+                count.setSurplusStep(avgSurplusStep/winTimes);
+            }
+
+
+            long SurplusTarget = data.stream().mapToInt(LevelData::getSurplusTarget).sum();
+            long SurplusTargetTotal = data.stream().mapToInt(LevelData::getSurplusTargetTotal).sum();
+            float avgLoseTarget =0.0f;
+            if(SurplusTargetTotal != 0) {
+                avgLoseTarget =(SurplusTarget *1.0f)   / (SurplusTargetTotal * 1.0f) ;
+            }
+            DecimalFormat decimalFormat=new DecimalFormat("0.0000");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+            String p=decimalFormat.format(avgLoseTarget);
+            count.setAvgLoseTarget(p);
+           // double surplusTargetcout = data.stream().map(LevelData::getSurplusTarget).sum()/winTimes;
 
             counts.add(count);
         });

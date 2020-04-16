@@ -73,4 +73,13 @@ public class LevelDataCount {
     private int shopBuyTimes;//购买次数
     @ExcelField(title = "消费人数")
     private long payUsers;//消费人数
+//    @ExcelField(title = "失败时剩余需要目标值")
+//    private int surplusTarget;//失败时剩余需要目标值
+//    @ExcelField(title = "失败时剩余目标总数")
+//    private int surplusTargetTotal;//失败时剩余目标总数
+    @ExcelField(title = "失败目标评价值")
+    private String avgLoseTarget;//胜利剩余步数
+    @ExcelField(title = "胜利剩余步数")
+    private long surplusStep;//平均胜利剩余步数
+
 }

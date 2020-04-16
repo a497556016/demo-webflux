@@ -36,6 +36,7 @@ public class LoginFilter extends HttpFilter {
                 && !"/account/login".equals(path)
                 && !("/user".equals(path)&&"post".equals(method))
                 && !("/levelData".equals(path)&&"post".equals(method))
+                && !("/levelData".equals(path)&&"put".equals(method))
         ) {
             Object o = servletRequest.getSession().getAttribute("loginUser");
             if (null == o) {

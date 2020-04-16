@@ -59,8 +59,11 @@
                 if(valid) {
                     axios.post("/account/login", this.loginUser).then(({data}) => {
                         if(data === 'success'){
-                            window.location.href = "/";
-                        }else {
+                            window.location.href = "/index.html";
+                        }else if(data === 'successtwo'){
+                            window.location.href = "/index1.html";
+                        }
+                         else {
                             this.error = "登录失败！";
                         }
                     })

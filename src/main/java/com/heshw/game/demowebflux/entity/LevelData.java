@@ -43,6 +43,10 @@ public class LevelData {
     private int buyItem3;
     private int shopBuyNum;
     private String version;
-
+    private int surplusStep;
+    private int surplusTarget;
+    private int surplusTargetTotal;
     private Date createDate;
+    private String channel;
+    private String gameName;
 }
