@@ -107,7 +107,7 @@ public class LevelDataController {
         String userId = levelData.getUserId();
         if(StringUtils.isNotEmpty(userId) && levelData.getLevelId() > 0) {
             List<LevelData> levelDataList = this.levelDataRepository.findAllByUserIdAndLevelId(userId, levelData.getLevelId()).buffer().blockFirst();
-            if(!levelDataList.isEmpty()) {
+            if(null != levelDataList && !levelDataList.isEmpty()) {
                 LevelData last = levelDataList.stream().sorted(Comparator.comparing(LevelData::getCreateDate).reversed()).findFirst().orElse(null);
                 levelData.setObjectId(last.getObjectId());
                 levelData.setCreateDate(new Date());
